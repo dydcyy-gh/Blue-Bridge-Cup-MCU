@@ -1,0 +1,55 @@
+C51 COMPILER V9.60.7.0   LED                                                               03/31/2024 10:39:53 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN .\Objects\led.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE led.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\led.l
+                    -st) OBJECT(.\Objects\led.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          //基础led
+   5          void led(u8 locate)//0亮
+   6          {
+   7   1              P2=(P2&0x1f)|0x80;
+   8   1              P0=locate;
+   9   1              P2&=0x1f;
+  10   1      }
+  11          
+  12          //led流水灯(中断调用）
+  13          void ledflow()
+  14          {
+  15   1              static bit x = 0;
+  16   1              static u8 shift = 0x01;
+  17   1              
+  18   1              P2=(P2&0x1f)|0x80;
+  19   1              P0=~shift;
+  20   1              if(x == 0)
+  21   1              {
+  22   2                      shift <<= 1;
+  23   2                      if(shift == 0x80) x = 1;
+  24   2              }
+  25   1              else
+  26   1              {
+  27   2                      shift >>= 1;
+  28   2                      if(shift == 0x01) x = 0;
+  29   2              }
+  30   1              P2&=0x1f;
+  31   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     58    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

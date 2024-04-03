@@ -1,0 +1,24 @@
+C51 COMPILER V9.60.7.0   TYPEDEF                                                           02/16/2024 16:21:19 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TYPEDEF
+OBJECT MODULE PLACED IN .\Objects\typedef.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE typedef.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\t
+                    -ypedef.lst) OBJECT(.\Objects\typedef.obj)
+
+line level    source
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
