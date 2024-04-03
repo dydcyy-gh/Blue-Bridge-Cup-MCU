@@ -1,0 +1,47 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              03/12/2024 17:31:14 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          //串口，定时器2
+   2          //串口发送(写)：单片机->其他设备（如电脑）
+   3          //串口接收(读)：其他设备->单片机
+   4          //本程序收发数据是从单片机的角度来的！
+   5          
+   6          #include <STC15F2K60S2.H>
+   7          #include "typedef.h"
+   8          #include "uart1timer2.h"
+   9           
+  10          u8 Rxdata[30] = {'\0'};
+  11          
+  12          //主函数在这
+  13          void main()
+  14          {
+  15   1              uart1init(); // 初始化串口
+  16   1              while (1)
+  17   1              {
+  18   2                      if (Uart_WaitRecive()==0)
+  19   2                      {
+  20   3                              SendString(Rxdata);
+  21   3                      }
+  22   2              }
+  23   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     19    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     30    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
