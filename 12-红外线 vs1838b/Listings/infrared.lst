@@ -1,0 +1,173 @@
+C51 COMPILER V9.60.7.0   INFRARED                                                          03/30/2024 09:00:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE INFRARED
+OBJECT MODULE PLACED IN .\Objects\infrared.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE infrared.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -infrared.lst) OBJECT(.\Objects\infrared.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          sbit IR_INPUT = P1^1;
+   5          
+   6          bit irflag = 0;
+   7          u8 ircode[4];
+   8          
+   9          void InitInfrared()
+  10          {
+  11   1              IR_INPUT = 1;
+  12   1              AUXR &= 0xBF;
+  13   1              TMOD &= 0x0F;
+  14   1              TMOD |= 0x10;
+  15   1              TR1 = 0;
+  16   1              ET1 = 0;
+  17   1      }
+  18          
+  19          u16 GetHighTime()
+  20          {
+  21   1              TH1 = 0;
+  22   1              TL1 = 0;
+  23   1              TR1 = 1;
+  24   1              while(IR_INPUT)
+  25   1              {
+  26   2                      if(TH1 >= 0x46)
+  27   2                      {
+  28   3                              break;
+  29   3                      }
+  30   2              }
+  31   1              TR1 = 0;
+  32   1      
+  33   1              return (TH1*256 + TL1);
+  34   1      }
+  35          
+  36          u16 GetLowTime()
+  37          {
+  38   1              TH1 = 0;
+  39   1              TL1 = 0;
+  40   1              TR1 = 1;
+  41   1              while(!IR_INPUT)
+  42   1              {
+  43   2                      if(TH1 >= 0X46)
+  44   2                      {
+  45   3                              break;
+  46   3                      }
+  47   2              }
+  48   1              TR1 = 0;
+  49   1      
+  50   1              return (TH1*256 + TL1);
+  51   1      }
+  52          
+  53          void IRScan()//12m晶振
+  54          {
+C51 COMPILER V9.60.7.0   INFRARED                                                          03/30/2024 09:00:21 PAGE 2   
+
+  55   1              u8 i, j;
+  56   1              u8 byt;
+  57   1              u16 time;
+  58   1      
+  59   1              time = GetLowTime();
+  60   1              if((time<8500) || (time>9500))
+  61   1              {
+  62   2                      return;         
+  63   2              }
+  64   1      
+  65   1              time = GetHighTime();
+  66   1              if((time<4000) || (time>5000))
+  67   1              {
+  68   2                      return; 
+  69   2              }
+  70   1      
+  71   1              for(i=0; i<4; i++)
+  72   1              {
+  73   2                      for(j=0; j<8; j++)
+  74   2                      {
+  75   3                              time = GetLowTime();
+  76   3                              if((time<340) || (time>780))
+  77   3                              {
+  78   4                                      return;
+  79   4                              }
+  80   3      
+  81   3                              time = GetHighTime();
+  82   3                              if((time>340) && (time<780))
+  83   3                              {
+  84   4                                      byt >>= 1;
+  85   4                              }
+  86   3                              else if((time>1460) && (time<1900))
+  87   3                              {
+  88   4                                      byt >>= 1;
+  89   4                                      byt |= 0x80;
+  90   4                              }
+  91   3                              else
+  92   3                              {
+  93   4                                      return;
+  94   4                              }
+  95   3                      }
+  96   2                      ircode[i] = byt;
+  97   2              }
+  98   1              irflag = 1;
+  99   1      }
+ 100          
+ 101          //void IRScan()//11.0592m晶振
+ 102          //{
+ 103          //      u8 i, j;
+ 104          //      u8 byt;
+ 105          //      u16 time;
+ 106          
+ 107          //      time = GetLowTime();
+ 108          //      if((time <7833) || (time > 8755))          
+ 109          //      {
+ 110          //              return; 
+ 111          //      }
+ 112          
+ 113          //      time = GetHighTime();
+ 114          //      if((time<3686) || (time > 4608))
+ 115          //      {
+ 116          //              return;
+C51 COMPILER V9.60.7.0   INFRARED                                                          03/30/2024 09:00:21 PAGE 3   
+
+ 117          //      }
+ 118          //      for(i=0; i<4; i++)
+ 119          //      {
+ 120          //              for(j=0; j<8; j++)
+ 121          //              {
+ 122          //                      time = GetLowTime();
+ 123          //                      if((time<313) ||(time >718))
+ 124          //                      {
+ 125          //                              return;
+ 126          //                      }
+ 127          //                      time = GetHighTime();
+ 128          //                      if((time>313) && (time <718))
+ 129          //                      {
+ 130          //                              byt >>= 1;      
+ 131          //                      }
+ 132          //                      else if((time>1345) && (time<1751))
+ 133          //                      {
+ 134          //                              byt >>= 1;
+ 135          //                              byt |= 0x80;
+ 136          //                      }
+ 137          //                      else
+ 138          //                      {
+ 139          //                              return;
+ 140          //                      }
+ 141          //              }
+ 142          //              ircode[i] = byt;
+ 143          //      }
+ 144          //      irflag = 1;
+ 145          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    218    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
