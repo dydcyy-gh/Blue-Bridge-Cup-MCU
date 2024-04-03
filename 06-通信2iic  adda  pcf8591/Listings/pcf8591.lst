@@ -1,0 +1,93 @@
+C51 COMPILER V9.60.7.0   PCF8591                                                           04/03/2024 10:21:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PCF8591
+OBJECT MODULE PLACED IN .\Objects\pcf8591.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE pcf8591.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\p
+                    -cf8591.lst) OBJECT(.\Objects\pcf8591.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "iic.h"
+   3          #include "typedef.h"
+   4          
+   5          #define ADDRESS 0x90//pcf8591写地址
+   6          
+   7          //AD：模拟（外设）（电压）->数字（计算机）
+   8                  //AIN0: 右边排针  channel 0  0x00
+   9                  //AIN1: 光敏电阻  channel 1  0x01
+  10                  //AIN2: 放大器    channel 2  0x02
+  11                  //AIN3: 滑动变阻器channel 3  0x03
+  12          u8 adc(u8 addr)
+  13          {
+  14   1              u8 ADC;
+  15   1              I2CStart();     //发送IIC开始信号
+  16   1              I2CSendByte(ADDRESS);   //发送写命令
+  17   1              I2CWaitAck();
+  18   1              I2CSendByte(addr); //写控制字
+  19   1              I2CWaitAck();
+  20   1              
+  21   1              I2CStart();
+  22   1              I2CSendByte(ADDRESS|0x01); //发送读命令                       
+  23   1              I2CWaitAck();
+  24   1              ADC=I2CReceiveByte();   //读入ADC值
+  25   1              I2CStop();//产生停止信号    
+  26   1              return ADC;
+  27   1      }
+  28          
+  29          
+  30          //               //
+  31          //ADC四路轮询程序
+  32          //               //
+  33          
+  34          
+  35          //DA：数字（计算机）->模拟（外设）（电压）
+  36          //输出DAC 0~255 to 0~5V
+  37          void dac(u8 DAC)
+  38          {
+  39   1              I2CStart();     //发送IIC开始信号
+  40   1              I2CSendByte(ADDRESS);   //发送写命令
+  41   1              I2CWaitAck();
+  42   1              I2CSendByte(0x40);  //写控制字:使能DAC输出
+  43   1              I2CWaitAck();
+  44   1              I2CSendByte(DAC);       //写DAC值
+  45   1              I2CWaitAck();
+  46   1              I2CStop();//产生停止信号
+  47   1      }
+  48          
+  49          //获取ADC转换值,输出DAC
+  50          u8 adda(u8 addr,u8 DAC)
+  51          {
+  52   1              u8 ADC;
+  53   1              I2CStart();     //发送IIC开始信号
+  54   1              I2CSendByte(ADDRESS);   //发送写命令
+C51 COMPILER V9.60.7.0   PCF8591                                                           04/03/2024 10:21:21 PAGE 2   
+
+  55   1              I2CWaitAck();
+  56   1              I2CSendByte(addr); //写控制字 010000XX（使能DAC）
+  57   1              I2CWaitAck();
+  58   1              I2CSendByte(DAC);       //写DAC值
+  59   1              I2CWaitAck();
+  60   1              
+  61   1              I2CStart();
+  62   1              I2CSendByte(ADDRESS|0X01); //发送读命令                       
+  63   1              I2CWaitAck();
+  64   1              ADC=I2CReceiveByte();   //读入ADC值
+  65   1              I2CStop();//产生停止信号      
+  66   1              return ADC;
+  67   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    128    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

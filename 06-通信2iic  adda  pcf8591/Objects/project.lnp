@@ -1,0 +1,9 @@
+".\Objects\main.obj",
+".\Objects\4key.obj",
+".\Objects\iic.obj",
+".\Objects\shuma.obj",
+".\Objects\pcf8591.obj",
+".\Objects\p0init.obj",
+".\Objects\timer1.obj" 
+TO ".\Objects\project" 
+PRINT(".\Listings\project.m51") RAMSIZE(256) 

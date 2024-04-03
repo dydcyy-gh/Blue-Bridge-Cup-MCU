@@ -1,0 +1,51 @@
+C51 COMPILER V9.60.7.0   TIMER1                                                            04/03/2024 10:21:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TIMER1
+OBJECT MODULE PLACED IN .\Objects\timer1.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE timer1.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ti
+                    -mer1.lst) OBJECT(.\Objects\timer1.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          
+   5          //定时器1 模式1 (16位自动重载)
+   6          //@12.0000hz xms 12t (12分频) 低速模式
+   7          void timer1init(u8 ms)
+   8          {
+   9   1              u32 tmp;
+  10   1              //AUXR在12t模式时可省略
+  11   1              AUXR &= 0xBF;
+  12   1              //TMOD
+  13   1              TMOD &= 0x0F;           //设置定时器模式
+  14   1              //计算得出TL TH的值
+  15   1              tmp = 12000000/12;  //每s 计数TMP次
+  16   1              tmp = (tmp*ms)/1000;//每ms计数TMP次
+  17   1              tmp = 65536 - tmp;
+  18   1              TH1 = (u8)(tmp>>8); //tmp / 256
+  19   1              TL1 = (u8)tmp;      //tmp % 256                 
+  20   1              //TCON
+  21   1              TF1 = 0;                        //清除TF0标志
+  22   1              TR1 = 1;                        //定时器0开始计时
+  23   1              //interupt
+  24   1              ET1 = 1;            //中断允许位
+  25   1              EA = 1;             //cpu中断允许位
+  26   1              PT1 = 0;            //优先级0(最低)
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    105    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
