@@ -1,0 +1,95 @@
+C51 COMPILER V9.60.7.0   DS18B20                                                           03/12/2024 17:30:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN .\Objects\ds18b20.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ds18b20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\d
+                    -s18b20.lst) OBJECT(.\Objects\ds18b20.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "onewire.h"
+   3          #include "shuma.h"
+   4          
+   5          extern u8 shumatmp[8];
+   6          extern u8 code LedChar[];
+   7          
+   8          //用到的rom命令
+   9          #define skip_rom 0xcc
+  10          //用到的功能命令
+  11          #define convent_t 0x44
+  12          #define read_scratchpad 0xbe
+  13          
+  14          //简单读取函数~
+  15          float ds18b20_read_tempeture()
+  16          {
+  17   1              unsigned int temp;
+  18   1              float tempeture;
+  19   1              unsigned char low,high;
+  20   1              //convent_t
+  21   1              init_ds18b20();
+  22   1              Write_DS18B20(skip_rom);
+  23   1              Write_DS18B20(convent_t);
+  24   1              Delay_OneWire(200);//2ms
+  25   1              //read_scratchpad
+  26   1              init_ds18b20();
+  27   1              Write_DS18B20(skip_rom);
+  28   1              Write_DS18B20(read_scratchpad);
+  29   1              
+  30   1              low = Read_DS18B20();
+  31   1              high = Read_DS18B20();
+  32   1              
+  33   1              //整合数据，0.0625精度
+  34   1              if(high>10)//负数
+  35   1              {
+  36   2                      high &= 0x07;
+  37   2                      temp = (high<<8)|low;
+  38   2                  tempeture = -(temp*0.0625);
+  39   2              }
+  40   1              else
+  41   1              {
+  42   2                      temp = (high<<8)|low;
+  43   2                      tempeture = temp*0.0625;
+  44   2              }
+  45   1      
+  46   1              return tempeture;
+  47   1      }
+  48          
+  49          //温度在数码管显示
+  50          void ds18b20_shuma()
+  51          {
+  52   1              float temp;
+  53   1              u32 te;
+  54   1              temp = ds18b20_read_tempeture();
+C51 COMPILER V9.60.7.0   DS18B20                                                           03/12/2024 17:30:06 PAGE 2   
+
+  55   1              if(temp<0) {shumatmp[0]=0xbf; temp = 0-temp;}
+  56   1              te = (u32)(temp*10000);
+  57   1              shumatmp[0]=te/1000000;
+  58   1              shumatmp[1]=te%1000000/100000;
+  59   1              shumatmp[2]=te%100000/10000;
+  60   1              shumatmp[3]=22;//加小数点
+  61   1              shumatmp[4]=te%10000/1000;
+  62   1              shumatmp[5]=te%1000/100;
+  63   1              shumatmp[6]=te%100/10;
+  64   1              shumatmp[7]=te%10;
+  65   1      }
+  66          
+  67          //未完待续
+  68          //温度阈值设置函数
+  69          //只要设置合适的温度，写入at24c02就行
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    436    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
