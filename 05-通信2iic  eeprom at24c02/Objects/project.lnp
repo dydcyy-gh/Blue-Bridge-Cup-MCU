@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\iic.obj",
+".\Objects\at24c02.obj",
+".\Objects\uart1timer2.obj" 
+TO ".\Objects\project" 
+PRINT(".\Listings\project.m51") RAMSIZE(256) 

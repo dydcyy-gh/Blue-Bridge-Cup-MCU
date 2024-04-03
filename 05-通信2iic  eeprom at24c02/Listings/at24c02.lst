@@ -1,0 +1,129 @@
+C51 COMPILER V9.60.7.0   AT24C02                                                           03/12/2024 17:30:56 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE AT24C02
+OBJECT MODULE PLACED IN .\Objects\at24c02.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE at24c02.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\a
+                    -t24c02.lst) OBJECT(.\Objects\at24c02.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "IIC.h"
+   3          #include "typedef.h"
+   4          
+   5          #define ADDRESS 0xA0//at24c02写地址
+   6          
+   7          //iicstart--iicstop 5ms延迟，但单字节读写不用
+   8          //（上电时间已大于）5ms
+   9          
+  10          void Delay5ms(void)     //@11.0592MHz
+  11          {
+  12   1              unsigned char data i, j;
+  13   1      
+  14   1              i = 54;
+  15   1              j = 199;
+  16   1              do
+  17   1              {
+  18   2                      while (--j);
+  19   2              } while (--i);
+  20   1      }
+  21          
+  22          //AT24C02字节写
+  23          void AT24C02_WriteByte(u8 Ad,u8 Data)
+  24          {
+  25   1              I2CStart();
+  26   1              I2CSendByte(ADDRESS);
+  27   1              I2CWaitAck();
+  28   1              I2CSendByte(Ad);
+  29   1              I2CWaitAck();
+  30   1              I2CSendByte(Data);
+  31   1              I2CWaitAck();
+  32   1              I2CStop();
+  33   1              Delay5ms();     //如果连续操作iic还是延时一下
+  34   1      }
+  35          
+  36          //AT24C02字节读
+  37          u8 AT24C02_ReadByte(u8 Ad)
+  38          {
+  39   1              u8 Data;
+  40   1              I2CStart();
+  41   1              I2CSendByte(ADDRESS);
+  42   1              I2CWaitAck();
+  43   1              I2CSendByte(Ad);
+  44   1              I2CWaitAck();
+  45   1              I2CStart();
+  46   1              I2CSendByte(ADDRESS|0x01);
+  47   1              I2CWaitAck();
+  48   1              Data=I2CReceiveByte();
+  49   1              I2CSendAck(1);
+  50   1              I2CStop();
+  51   1              Delay5ms();
+  52   1              return Data;
+  53   1      }
+  54          
+C51 COMPILER V9.60.7.0   AT24C02                                                           03/12/2024 17:30:56 PAGE 2   
+
+  55          //注：at24c02可以读写所有字符(包括\n\r\0)
+  56          
+  57          //at24c02页写地址：
+  58          //第一页 0x00 ~ 0x07  第二页 0x08 ~ 0x0F  以此类推
+  59          
+  60          //连续页写函数
+  61          void EEPROM_Write(u8 Ad, u8 *p, u8 lens)//页写入
+  62          {
+  63   1              while(lens > 0)//页循环，循环的是页数
+  64   1              {
+  65   2                      I2CStart();
+  66   2                      I2CSendByte(ADDRESS);
+  67   2                  I2CWaitAck();
+  68   2                      I2CSendByte(Ad);
+  69   2                  I2CWaitAck();
+  70   2                      while(lens > 0)//循环写入1页数据
+  71   2                      {
+  72   3                              I2CSendByte(*p++); //p为源数据指针
+  73   3                              I2CWaitAck();
+  74   3                              Ad++;                   
+  75   3                              lens--;
+  76   3                              if((Ad & 0x07) == 0)//判断地址是否达到页边界，24C02每页8字节
+  77   3                                      break;//如果达到一页的边界，就跳出该页写数据的循环，然后写下一页
+  78   3                      }
+  79   2                      I2CStop();
+  80   2                      Delay5ms();
+  81   2              }
+  82   1      }
+  83          
+  84          //连续读函数
+  85          void EEPROM_Read(u8 Ad, u8 *p, u8 lens)     
+  86          {
+  87   1              I2CStart();              
+  88   1              I2CSendByte(ADDRESS);    
+  89   1              I2CWaitAck();         
+  90   1              I2CSendByte(Ad);       
+  91   1              I2CWaitAck();                     
+  92   1      
+  93   1              I2CStart();  
+  94   1              I2CSendByte(ADDRESS|0x01);
+  95   1              I2CWaitAck();    
+  96   1              while(lens--)
+  97   1              {
+  98   2                      *p++ = I2CReceiveByte();
+  99   2                      if(lens)  I2CSendAck(0);
+ 100   2                      else I2CSendAck(1);
+ 101   2              }
+ 102   1              I2CStop();      //关闭总线
+ 103   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    265    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      14
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
