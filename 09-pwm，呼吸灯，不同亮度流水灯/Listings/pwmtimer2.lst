@@ -1,0 +1,41 @@
+C51 COMPILER V9.60.7.0   PWMTIMER2                                                         03/30/2024 11:09:47 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PWMTIMER2
+OBJECT MODULE PLACED IN .\Objects\pwmtimer2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE pwmtimer2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\pwmtimer2.lst) OBJECT(.\Objects\pwmtimer2.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          //定时器2 模式1 (16位自动重载)
+   5          //@12.000MHz 10us 1t (不分频) 高速模式
+   6          void timer2init()
+   7          {
+   8   1              AUXR |= 0x04;
+   9   1              //计算得出TL TH的值
+  10   1              T2L = 0x88;                             //设置定时初始值
+  11   1              T2H = 0xFF;                             //设置定时初始值 
+  12   1              //auxr
+  13   1              AUXR |= 0x10;                   //定时器2开始计时
+  14   1              //interupt
+  15   1              IE2 |= 0x04;                    //使能定时器2中断
+  16   1              EA = 1;             //cpu中断允许位
+  17   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

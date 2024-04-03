@@ -1,0 +1,7 @@
+".\Objects\main.obj",
+".\Objects\led.obj",
+".\Objects\p0init.obj",
+".\Objects\timer1.obj",
+".\Objects\pwmtimer2.obj" 
+TO ".\Objects\project" 
+PRINT(".\Listings\project.m51") RAMSIZE(256) 
