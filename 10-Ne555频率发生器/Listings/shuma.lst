@@ -1,0 +1,128 @@
+C51 COMPILER V9.60.7.0   SHUMA                                                             03/30/2024 13:26:34 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SHUMA
+OBJECT MODULE PLACED IN .\Objects\shuma.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE shuma.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\shu
+                    -ma.lst) OBJECT(.\Objects\shuma.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          //共阳数码管段码表(考试会给的吧)
+   5          u8 code LedChar[] = {
+   6                  0xC0, 0xF9, 0xA4, 0xB0,//0-3
+   7                  0x99, 0x92, 0x82, 0xF8,//4-7
+   8                  0x80, 0x90, 0x88, 0x83,//8-b
+   9                  0xC6, 0xA1, 0x86, 0x8E,//C-F
+  10          }; 
+  11          
+  12          u8 shumatmp[]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};//数码管缓冲区
+  13          
+  14          //基础数码管显示(直接输入数字，在中断调用)
+  15          void shumaguan(u8 locate,u8 number)
+  16          {
+  17   1              //清零
+  18   1              P2=(P2&0x1f)|0xe0;
+  19   1              P0=0xff;
+  20   1              P2&=0x1f;
+  21   1              //数码管位选（1亮）   y6c
+  22   1              P2=(P2&0x1f)|0xc0;
+  23   1              P0=(0x01<<(locate-1));
+  24   1              P2&=0x1f;
+  25   1              //数码管段选（0亮）   y7c
+  26   1              P2=(P2&0x1f)|0xe0;
+  27   1              P0=LedChar[number];
+  28   1              P2&=0x1f;
+  29   1      }
+  30          
+  31          //数码管显示(输入0x00）
+  32          void shuma(u8 locate,u8 num0x)
+  33          {
+  34   1              //清零
+  35   1              P2=(P2&0x1f)|0xe0;
+  36   1              P0=0xff;
+  37   1              P2&=0x1f;
+  38   1              //数码管位选（1亮）   y6c
+  39   1              P2=(P2&0x1f)|0xc0;
+  40   1              P0=(0x01<<(locate-1));
+  41   1              P2&=0x1f;
+  42   1              //数码管段选（0亮）   y7c
+  43   1              P2=(P2&0x1f)|0xe0;
+  44   1              P0=num0x;
+  45   1              P2&=0x1f;
+  46   1      }
+  47          
+  48          //数码管辅助多位整数显示（起始位置，u32整数）
+  49          void warma(u8 locate,u32 num)
+  50          {
+  51   1              char i,j=0;
+  52   1              u8 shark[8];
+  53   1              for(i=0;i<8;i++)
+  54   1              {
+C51 COMPILER V9.60.7.0   SHUMA                                                             03/30/2024 13:26:34 PAGE 2   
+
+  55   2                      shark[i]=num%10;
+  56   2                      num/=10;
+  57   2              }
+  58   1              for(i=7;i>=0;i--)
+  59   1              {
+  60   2                      if(shark[i]==0){shumatmp[i]=0xff;j++;}
+  61   2                      else break;
+  62   2              }
+  63   1              for(;i>=0;i--)
+  64   1              {
+  65   2                      shumatmp[6-j-i+locate] = LedChar[shark[i]];
+  66   2              }
+  67   1      }
+  68          
+  69          //数码管扫描，用于中断函数，实现多位显示
+  70          void shumascan()
+  71          {
+  72   1              static u8 count = 0;
+  73   1              count++;
+  74   1              switch(count)
+  75   1              {
+  76   2                      case 1:
+  77   2                              shuma(1,shumatmp[0]);
+  78   2                              break;
+  79   2                      case 2:
+  80   2                              shuma(2,shumatmp[1]);
+  81   2                              break;
+  82   2                      case 3:
+  83   2                              shuma(3,shumatmp[2]);
+  84   2                              break;
+  85   2                      case 4:
+  86   2                              shuma(4,shumatmp[3]);
+  87   2                              break;
+  88   2                      case 5:
+  89   2                              shuma(5,shumatmp[4]);
+  90   2                              break;
+  91   2                      case 6:
+  92   2                              shuma(6,shumatmp[5]);
+  93   2                              break;
+  94   2                      case 7:
+  95   2                              shuma(7,shumatmp[6]);
+  96   2                              break;
+  97   2                      case 8:
+  98   2                              shuma(8,shumatmp[7]);
+  99   2                              count = 0;
+ 100   2                              break;
+ 101   2              }
+ 102   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    351    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      9      15
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
