@@ -1,0 +1,9 @@
+".\Objects\p0init.obj",
+".\Objects\BeepRelay.obj",
+".\Objects\led.obj",
+".\Objects\shuma.obj",
+".\Objects\4key.obj",
+".\Objects\timer1.obj",
+".\Objects\16key.obj" 
+TO ".\Objects\project" 
+PRINT(".\Listings\project.m51") RAMSIZE(256) 

@@ -1,0 +1,143 @@
+C51 COMPILER V9.60.7.0   IIC                                                               03/30/2024 14:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE IIC
+OBJECT MODULE PLACED IN .\Objects\iic.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE iic.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\iic.l
+                    -st) OBJECT(.\Objects\iic.obj)
+
+line level    source
+
+   1          //iic.c由蓝桥杯官方提供
+   2          //iic先发高位再发低位！
+   3          
+   4          //以下需自己加上
+   5          #include <STC15F2K60S2.H>
+   6          #include "intrins.h"
+   7          sbit scl = P2^0;
+   8          sbit sda = P2^1;
+   9          //以上需自己加上
+  10          
+  11          //5us延时
+  12          #define DELAY_TIME      5 
+  13          
+  14          //延时函数
+  15          static void I2C_Delay(unsigned char n)
+  16          {
+  17   1          do
+  18   1          {
+  19   2              _nop_();_nop_();_nop_();_nop_();_nop_();
+  20   2              _nop_();_nop_();_nop_();_nop_();_nop_();
+  21   2              _nop_();_nop_();_nop_();_nop_();_nop_();                
+  22   2          }
+  23   1          while(n--);         
+  24   1      }
+  25          
+  26          //开始
+  27          void I2CStart(void)
+  28          {
+  29   1          sda = 1;
+  30   1          scl = 1;
+  31   1              I2C_Delay(DELAY_TIME);
+  32   1          sda = 0;
+  33   1              I2C_Delay(DELAY_TIME);
+  34   1          scl = 0;    
+  35   1      }
+  36          
+  37          //停止
+  38          void I2CStop(void)
+  39          {
+  40   1          sda = 0;
+  41   1          scl = 1;
+  42   1              I2C_Delay(DELAY_TIME);
+  43   1          sda = 1;
+  44   1              I2C_Delay(DELAY_TIME);
+  45   1      }
+  46          
+  47          //发送一字节
+  48          void I2CSendByte(unsigned char byt)
+  49          {
+  50   1          unsigned char i;
+  51   1              EA = 0;//加上
+  52   1          for(i=0; i<8; i++){
+  53   2              scl = 0;
+  54   2                      I2C_Delay(DELAY_TIME);
+C51 COMPILER V9.60.7.0   IIC                                                               03/30/2024 14:49:06 PAGE 2   
+
+  55   2              if(byt & 0x80){
+  56   3                  sda = 1;
+  57   3              }
+  58   2              else{
+  59   3                  sda = 0;
+  60   3              }
+  61   2                      I2C_Delay(DELAY_TIME);
+  62   2              scl = 1;
+  63   2              byt <<= 1;
+  64   2                      I2C_Delay(DELAY_TIME);
+  65   2          }
+  66   1          scl = 0; 
+  67   1          EA = 1;     //加上
+  68   1      }
+  69          
+  70          //接收一字节
+  71          unsigned char I2CReceiveByte(void)
+  72          {
+  73   1              unsigned char da;
+  74   1              unsigned char i;
+  75   1              EA = 0;//加上
+  76   1              for(i=0;i<8;i++){   
+  77   2                      scl = 1;
+  78   2                      I2C_Delay(DELAY_TIME);
+  79   2                      da <<= 1;
+  80   2                      if(sda) 
+  81   2                              da |= 0x01;
+  82   2                      scl = 0;
+  83   2                      I2C_Delay(DELAY_TIME);
+  84   2              }
+  85   1              EA = 1;//加上
+  86   1              return da;    
+  87   1      }
+  88          
+  89          //（发送字节后）接收
+  90          unsigned char I2CWaitAck(void)
+  91          {
+  92   1              unsigned char ackbit;
+  93   1              
+  94   1          scl = 1;
+  95   1              I2C_Delay(DELAY_TIME);
+  96   1          ackbit = sda; 
+  97   1          scl = 0;
+  98   1              I2C_Delay(DELAY_TIME);
+  99   1              
+ 100   1              return ackbit;
+ 101   1      }
+ 102          
+ 103          //（接收字节后）发送  0成功 1失败
+ 104          void I2CSendAck(unsigned char ackbit)
+ 105          {
+ 106   1          scl = 0;
+ 107   1          sda = ackbit; 
+ 108   1              I2C_Delay(DELAY_TIME);
+ 109   1          scl = 1;
+ 110   1              I2C_Delay(DELAY_TIME);
+ 111   1          scl = 0; 
+ 112   1              sda = 1;
+ 113   1              I2C_Delay(DELAY_TIME);
+ 114   1      }
+ 115          
+
+C51 COMPILER V9.60.7.0   IIC                                                               03/30/2024 14:49:06 PAGE 3   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    176    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

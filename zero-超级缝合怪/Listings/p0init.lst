@@ -1,0 +1,46 @@
+C51 COMPILER V9.60.7.0   P0INIT                                                            03/30/2024 14:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE P0INIT
+OBJECT MODULE PLACED IN .\Objects\p0init.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE p0init.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\p0
+                    -init.lst) OBJECT(.\Objects\p0init.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          
+   3          //用于关闭p0口的所有外设
+   4          void p0init()
+   5          {
+   6   1              //关闭led！  y4c
+   7   1              P2=(P2&0x1f)|0x80;
+   8   1              P0=0xff;
+   9   1              P2&=0x1f;
+  10   1              //关闭蜂鸣器继电器   y5c
+  11   1              P2=(P2&0x1f)|0xa0;
+  12   1              P06=0;//蜂鸣器
+  13   1              P04=0;//继电器
+  14   1              P2&=0x1f;
+  15   1              //初始化数码管（全灭）
+  16   1              P2=(P2&0x1f)|0xc0;  //y6c
+  17   1              P0=0xff;
+  18   1              P2&=0x1f;
+  19   1              P2=(P2&0x1f)|0xe0;  //y7c
+  20   1              P0=0xff;
+  21   1              P2&=0x1f;
+  22   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     58    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,112 @@
+C51 COMPILER V9.60.7.0   4KEY                                                              03/30/2024 14:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE 4KEY
+OBJECT MODULE PLACED IN .\Objects\4key.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 4key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\4key
+                    -.lst) OBJECT(.\Objects\4key.obj)
+
+line level    source
+
+   1          //独立按键长按，短按控制
+   2          #include <STC15F2K60S2.H>
+   3          #include "ctrl.h"
+*** WARNING C318 IN LINE 3 OF 4key.c: can't open file 'ctrl.h'
+   4          #include "typedef.h"
+   5          
+   6          //读出的值为0即为按下
+   7          sbit KEY_IN_1 = P3^3;sbit KEY_IN_2 = P3^2;
+   8          sbit KEY_IN_3 = P3^1;sbit KEY_IN_4 = P3^0;
+   9          
+  10          u16 keytimelen[4]={0,0,0,0};//长按时间
+  11          
+  12          //按键行为函数 放在CTRL里面
+  13          void keyaction4(u8 i)
+  14          {
+  15   1              switch(i)
+  16   1              {
+  17   2                      case 1:
+  18   2                              break;
+  19   2                      
+  20   2                      case 2:
+  21   2                              break;
+  22   2      
+  23   2                      default:
+  24   2                              break;
+  25   2              }
+  26   1      }
+  27          
+  28          //独立按键扫描函数(在中断调用)
+  29          void keyscan4()
+  30          {
+  31   1              u8 i;
+  32   1              //2*8ms延时判断
+  33   1              static u8 keytmp[4] = {0xff,0xff,0xff,0xff};
+  34   1              //防止重复对比
+  35   1              static u8 keyold[4] = {1,1,1,1};
+  36   1              static u8 keynow[4] = {1,1,1,1};
+  37   1              //长按起始时间
+  38   1              static u16 timemax[4] = {1000,1000,1000,1000};
+  39   1              
+  40   1              keytmp[0] = (keytmp[0]<<1)| KEY_IN_1;
+  41   1              keytmp[1] = (keytmp[1]<<1)| KEY_IN_2;
+  42   1              keytmp[2] = (keytmp[2]<<1)| KEY_IN_3;
+  43   1              keytmp[3] = (keytmp[3]<<1)| KEY_IN_4;
+  44   1              
+  45   1              for(i=0;i<4;i++)
+  46   1              {
+  47   2                      if(keytmp[i] == 0xff)
+  48   2                      {
+  49   3                              keynow[i] = 1;
+  50   3                              keytimelen[i] = 0;
+  51   3                      }
+  52   2                      if(keytmp[i] == 0x00)
+  53   2                      {
+C51 COMPILER V9.60.7.0   4KEY                                                              03/30/2024 14:49:06 PAGE 2   
+
+  54   3                              keynow[i] = 0;
+  55   3                              keytimelen[i] += 2;
+  56   3                      }
+  57   2              }
+  58   1              
+  59   1              for(i=0;i<4;i++)
+  60   1              {
+  61   2                      //短按检测
+  62   2                      if(keyold[i] != keynow[i])
+  63   2                      {
+  64   3                              if(keynow[i]==0)
+  65   3                              {
+  66   4                                      keyaction4(i);
+  67   4                              }
+  68   3                              keyold[i]=keynow[i];
+  69   3                      }
+  70   2                      //长按检测
+  71   2                      if(keytimelen[i] < 60000 && timemax[i] < 60000)
+  72   2                      {                       
+  73   3                              if(keytimelen[i] > timemax[i])
+  74   3                              {
+  75   4                                      keyaction4(i);
+  76   4                                      timemax[i] += 100;//0.1ms+1
+  77   4                              }
+  78   3                      }
+  79   2                      else
+  80   2                      {
+  81   3                              keytimelen[i] = 900;
+  82   3                              timemax[i] = 1000;
+  83   3                      }
+  84   2              }
+  85   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    296    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     28       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

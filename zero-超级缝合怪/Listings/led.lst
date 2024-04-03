@@ -1,0 +1,81 @@
+C51 COMPILER V9.60.7.0   LED                                                               03/30/2024 14:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN .\Objects\led.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE led.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\led.l
+                    -st) OBJECT(.\Objects\led.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "typedef.h"
+   3          
+   4          u8 shift = 0x01;
+   5          
+   6          //基础led
+   7          void led(u8 locate)//0x
+   8          {
+   9   1              P2 = (P2&0x1f)|0x80;
+  10   1              P0 = locate;
+  11   1              P2 &= 0x1f;
+  12   1      }
+  13          
+  14          //led流水灯(中断调用）
+  15          void ledflow()
+  16          {
+  17   1              static bit x = 0;
+  18   1              
+  19   1              P2 = (P2&0x1f)|0x80;
+  20   1              P0 = ~(shift);
+  21   1              P2 &= 0x1f;
+  22   1              
+  23   1              if(x == 0)
+  24   1              {
+  25   2                      shift<<1;
+*** WARNING C275 IN LINE 25 OF led.c: expression with possibly no effect
+  26   2                      if(shift == 0x80) x = 1;
+  27   2              }
+  28   1              else
+  29   1              {
+  30   2                      shift>>1;
+*** WARNING C275 IN LINE 30 OF led.c: expression with possibly no effect
+  31   2                      if(shift == 0x01) x = 0;
+  32   2              }
+  33   1      }
+  34          
+  35          
+  36          //pwm计算函数  定时器10us（100000hz）
+  37          //max（最大精度）:建议10（T=100us）-100（T=1ms）
+  38          //ex（占空比）：Ton/T  ex/max
+  39          void pwm (u8 max,u8 ex)
+  40          {
+  41   1              static u8 cnt = 0;
+  42   1              if(cnt == ex)
+  43   1              {
+  44   2                      led(0xff);
+  45   2              }
+  46   1              if(cnt < max)
+  47   1                      cnt++;
+  48   1              else
+  49   1              {
+  50   2                      led(~shift);
+  51   2                      cnt = 0;
+  52   2              }
+C51 COMPILER V9.60.7.0   LED                                                               03/30/2024 14:49:06 PAGE 2   
+
+  53   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     81    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

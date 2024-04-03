@@ -1,0 +1,110 @@
+C51 COMPILER V9.60.7.0   UART1TIMER2                                                       03/30/2024 14:49:06 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART1TIMER2
+OBJECT MODULE PLACED IN .\Objects\uart1timer2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE uart1timer2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\uart1timer2.lst) OBJECT(.\Objects\uart1timer2.obj)
+
+line level    source
+
+   1          //串口发送(写)：单片机->其他设备（如电脑）
+   2          //串口接收(读)：其他设备->单片机
+   3          
+   4          #include <STC15F2K60S2.H>
+   5          #include "typedef.h"
+   6          
+   7          bit busysend;
+   8          bit busyreceive;
+   9          
+  10          extern u8 Rxdata[30];//接收储存函数
+  11          u8 RxdataCnt;//状态记录+数组计数
+  12          u8 RxdataPre;//状态对照
+  13          
+  14          //单片机发送一个字节
+  15          void SendData(u8 dat)
+  16          {
+  17   1              while (busysend);
+  18   1              busysend = 1;
+  19   1              SBUF = dat;  //写数据到UART数据寄存器
+  20   1      }
+  21          
+  22          //单片机接收一个字节
+  23          u8 ReceiveData()
+  24          {
+  25   1              u8 dat;
+  26   1              while (busyreceive);
+  27   1              busyreceive = 1;
+  28   1              dat = SBUF;
+  29   1              return dat;
+  30   1      }
+  31          
+  32          //单片机发送字符串
+  33          //u8 *p = "hello"
+  34          void SendString(u8 *s)
+  35          {
+  36   1          while (*s != '\0')  // 检测字符串结束标志
+  37   1          {
+  38   2              SendData(*s++); // 发送当前字符
+  39   2          }
+  40   1      }
+  41          
+  42          //串口波特率生成器
+  43          void uart1init()        //9600bps@11.0592MHz
+  44          {
+  45   1              SCON = 0x50;            //8位数据,可变波特率
+  46   1              AUXR |= 0x01;           //串口1选择定时器2为波特率发生器
+  47   1              AUXR &= 0xFB;           //定时器时钟12T模式
+  48   1              T2L = 0xE8;                     //设置定时初始值
+  49   1              T2H = 0xFF;                     //设置定时初始值
+  50   1              AUXR |= 0x10;           //定时器2开始计时
+  51   1              ES = 1;                         //使能串口1中断
+  52   1              EA = 1;             //打开总中断（加上）
+  53   1      }
+  54          
+C51 COMPILER V9.60.7.0   UART1TIMER2                                                       03/30/2024 14:49:06 PAGE 2   
+
+  55          //定时器2中断函数，16位自动重装填
+  56          void timer2uart1() interrupt 4
+  57          {
+  58   1              if (TI)                         //检测串口1发送中断
+  59   1              {
+  60   2                      TI = 0;                 //清除串口1发送中断请求位
+  61   2                      busysend = 0;   //清忙标志（加上）
+  62   2              }
+  63   1              if (RI)                         //检测串口1接收中断
+  64   1              {
+  65   2                      Rxdata[RxdataCnt++] = SBUF;// 一定要在串口接收数据！！！
+  66   2                      RI = 0;                 //清除串口1接收中断请求位
+  67   2                      busyreceive = 0;//清忙标志（加上）
+  68   2              }
+  69   1      }
+  70          
+  71          //不定字符接收函数，就是不知道为什么不能接收\0
+  72          u8 Uart_WaitRecive(void)
+  73          {
+  74   1              if(RxdataCnt == 0)                                              //如果接收计数为0, 则说明没有处于接收数据中，所以直接跳
+             -出，结束函数
+  75   1              return 1;
+  76   1              if(RxdataCnt == RxdataPre)                              //如果上一次的值和这次相同，则说明接收完毕
+  77   1              { 
+  78   2                      RxdataCnt = 0;                                          //清0接收计数
+  79   2                      return 0;                                                       //返回接收完成标志
+  80   2              }
+  81   1              RxdataPre = RxdataCnt;                                  //置未相同
+  82   1              return 1;                                                               //返回接收未完成标志
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    143    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
