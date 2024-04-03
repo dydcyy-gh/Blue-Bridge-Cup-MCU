@@ -1,0 +1,43 @@
+C51 COMPILER V9.60.7.0   BEEPRELAY                                                         03/30/2024 15:05:22 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE BEEPRELAY
+OBJECT MODULE PLACED IN .\Objects\BeepRelay.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE BeepRelay.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings
+                    -\BeepRelay.lst) OBJECT(.\Objects\BeepRelay.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          
+   3          //打开蜂鸣器
+   4          void buzz()
+   5          {
+   6   1              P2=(P2&0x1f)|0xa0;
+   7   1              P06=1;//蜂鸣器
+   8   1              P04=0;
+   9   1              P2&=0x1f;
+  10   1      }
+  11          
+  12          //打开继电器
+  13          void relay()
+  14          {
+  15   1              P2=(P2&0x1f)|0xa0;
+  16   1              P04=1;//继电器
+  17   1              P06=0;
+  18   1              P2&=0x1f;
+  19   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     32    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

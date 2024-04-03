@@ -1,0 +1,105 @@
+C51 COMPILER V9.60.7.0   16KEY                                                             03/30/2024 15:05:22 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE 16KEY
+OBJECT MODULE PLACED IN .\Objects\16key.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 16key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\16k
+                    -ey.lst) OBJECT(.\Objects\16key.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "shuma.h"
+   3          #include "typedef.h"
+   4          
+   5          //矩阵键盘用此声明
+   6          //IN给零，OUT为0即为按下
+   7          sbit key_in_1 = P3^0;//7  11 15 19
+   8          sbit key_in_2 = P3^1;//6  10 14 18
+   9          sbit key_in_3 = P3^2;//5  9  13 17
+  10          sbit key_in_4 = P3^3;//4  8  12 16
+  11          
+  12          sbit key_out_1 = P4^4; //7  6  5  4
+  13          sbit key_out_2 = P4^2; //11 10 9  8
+  14          sbit key_out_3 = P3^5; //15 14 13 12
+  15          sbit key_out_4 = P3^4; //19 18 17 16
+  16          
+  17          //矩阵键盘含义数组
+  18          u8 keymap[4][4] ={
+  19                  {7, 11,15,19},
+  20                  {6, 10,14,18},
+  21                  {5, 9, 13,17},
+  22                  {4, 8, 12,16}
+  23          };
+  24          
+  25          //矩阵键盘扫描函数(在中断调用)
+  26          //扫描一轮耗时x*8*4ms（建议中断x=1ms）
+  27          void keyscan16()
+  28          {
+  29   1              u8 i;
+  30   1              static u8 key = 0;
+  31   1              //2*8ms延时判断
+  32   1              static u8 keytmp[4][4] = {{0xff,0xff,0xff,0xff},{0xff,0xff,0xff,0xff},
+  33   1                      {0xff,0xff,0xff,0xff},{0xff,0xff,0xff,0xff}};
+  34   1              //防重复对比数组
+  35   1              static u8 keyold[4][4] = {{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}};
+  36   1              static u8 keynow[4][4] = {{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}};
+  37   1              
+  38   1              switch(key)//打开一路并关闭上一轮打开的
+  39   1              {
+  40   2                      case 0: key_in_1 = 0; key_in_4 = 1; break;
+  41   2                      case 1: key_in_2 = 0; key_in_1 = 1; break;
+  42   2                      case 2: key_in_3 = 0; key_in_2 = 1; break;
+  43   2                      case 3: key_in_4 = 0; key_in_3 = 1; break;
+  44   2                      default : break;
+  45   2              }
+  46   1              
+  47   1              keytmp[key][0] = (keytmp[key][0]<<1)| key_out_1;
+  48   1              keytmp[key][1] = (keytmp[key][1]<<1)| key_out_2;
+  49   1              keytmp[key][2] = (keytmp[key][2]<<1)| key_out_3;
+  50   1              keytmp[key][3] = (keytmp[key][3]<<1)| key_out_4;
+  51   1              
+  52   1              for(i=0;i<4;i++)
+  53   1              {
+  54   2                      if(keytmp[key][i] == 0xff)
+C51 COMPILER V9.60.7.0   16KEY                                                             03/30/2024 15:05:22 PAGE 2   
+
+  55   2                      {
+  56   3                              keynow[key][i] = 1;
+  57   3                      }
+  58   2                      else if(keytmp[key][i] == 0x00)
+  59   2                      {
+  60   3                              keynow[key][i] = 0;
+  61   3                      }
+  62   2                      else {}
+  63   2              }
+  64   1              for(i=0;i<4;i++)
+  65   1              {
+  66   2                      //短按控制
+  67   2                      if(keynow[key][i]!=keyold[key][i])
+  68   2                      {
+  69   3                              if(keynow[key][i]==0)
+  70   3                              {
+  71   4                                      warma(1,keymap[key][i]);
+  72   4                              }
+  73   3                              keyold[key][i]=keynow[key][i];
+  74   3                      }
+  75   2              }
+  76   1              
+  77   1              if(key == 3) key = 0;
+  78   1              else key++;
+  79   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    323    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     65       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

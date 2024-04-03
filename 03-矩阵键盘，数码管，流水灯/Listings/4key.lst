@@ -1,0 +1,109 @@
+C51 COMPILER V9.60.7.0   4KEY                                                              02/16/2024 16:25:26 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE 4KEY
+OBJECT MODULE PLACED IN .\Objects\4key.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 4key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\4key
+                    -.lst) OBJECT(.\Objects\4key.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "shuma.h"
+   3          #include "typedef.h"
+   4          
+   5          //独立按键用此声明
+   6          //读出的值为0即为按下
+   7          sbit KEY_IN_1 = P3^3;sbit KEY_IN_2 = P3^2;sbit KEY_IN_3 = P3^1;sbit KEY_IN_4 = P3^0;
+   8          
+   9          u16 keytimelen[4]={0,0,0,0};//长按时间
+  10          
+  11          extern u32 number;
+  12          
+  13          //按键行为函数
+  14          void keyaction4(u8 i)
+  15          {
+  16   1              switch(i)
+  17   1              {
+  18   2                      case 0:number++;break;
+  19   2                      case 1:number--;break;
+  20   2                      case 2:number=number*2;break;
+  21   2                      case 3:number=number/2;break;
+  22   2              }
+  23   1              warma(1,number); //按键事件中更新数码管显示
+  24   1      }
+  25          
+  26          //独立按键扫描函数(在中断调用)
+  27          void keyscan4()
+  28          {
+  29   1              u8 i;
+  30   1              //2*8ms延时判断
+  31   1              static u8 keytmp[4] = {0xff,0xff,0xff,0xff};
+  32   1              //防止重复对比
+  33   1              static u8 keybefore[4] = {1,1,1,1};
+  34   1              static u8 keynow[4] = {1,1,1,1};
+  35   1              //长按起始时间
+  36   1              static u16 timemax[4] = {1000,1000,1000,1000};
+  37   1              
+  38   1              keytmp[0] = (keytmp[0]<<1)| KEY_IN_1;
+  39   1              keytmp[1] = (keytmp[1]<<1)| KEY_IN_2;
+  40   1              keytmp[2] = (keytmp[2]<<1)| KEY_IN_3;
+  41   1              keytmp[3] = (keytmp[3]<<1)| KEY_IN_4;
+  42   1              
+  43   1              for(i=0;i<4;i++)
+  44   1              {
+  45   2                      if(keytmp[i] == 0xff)
+  46   2                      {
+  47   3                              keynow[i] = 1;
+  48   3                              keytimelen[i] = 0;
+  49   3                      }
+  50   2                      else if(keytmp[i] == 0x00)
+  51   2                      {
+  52   3                              keynow[i] = 0;
+  53   3                              keytimelen[i] += 2;
+  54   3                      }
+C51 COMPILER V9.60.7.0   4KEY                                                              02/16/2024 16:25:26 PAGE 2   
+
+  55   2                      else {}
+  56   2              }
+  57   1              for(i=0;i<4;i++)
+  58   1              {
+  59   2                      //短按控制
+  60   2                      if(keynow[i]!=keybefore[i])
+  61   2                      {
+  62   3                              if(keynow[i]==0)
+  63   3                              {
+  64   4                                      keyaction4(i);
+  65   4                              }
+  66   3                              keybefore[i]=keynow[i];
+  67   3                      }
+  68   2                      //长按控制
+  69   2                      if(keytimelen[i] < 65000|timemax[i] < 65000)
+  70   2                      {                       
+  71   3                              if(keytimelen[i] > timemax[i])
+  72   3                              {
+  73   4                                      keyaction4(i);
+  74   4                                      timemax[i] += 100;//0.1ms+1
+  75   4                              }
+  76   3                      }
+  77   2                      else
+  78   2                      {
+  79   3                              keytimelen[i] = 900;
+  80   3                              timemax[i] = 1000;
+  81   3                      }
+  82   2              }
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    444    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     28       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
