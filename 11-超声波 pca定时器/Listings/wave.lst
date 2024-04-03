@@ -1,0 +1,71 @@
+C51 COMPILER V9.60.7.0   WAVE                                                              03/30/2024 14:17:09 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE WAVE
+OBJECT MODULE PLACED IN .\Objects\wave.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE wave.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\wave
+                    -.lst) OBJECT(.\Objects\wave.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "intrins.h"
+   3          #include "typedef.h"
+   4          
+   5          #define TX P10  //超声波发送引脚
+   6          #define RX P11  //超声波信号接收反馈引脚
+   7          
+   8          void send_wave()//40khz方波（25us）
+   9          {
+  10   1              u8 i = 8;
+  11   1              while(i--)
+  12   1              {
+  13   2                      TX = 1;_nop_();_nop_();_nop_();
+  14   2                      TX = 0;_nop_();_nop_();_nop_();
+  15   2              }
+  16   1      }
+  17          
+  18          //返回0-99cm的数字，使用pca定时器，tmod改为cmod，tl th改为cl ch就行
+  19          u8 receive_wave()
+  20          {
+  21   1              u16 time,distance;
+  22   1              CMOD = 0x00;                    //设置定时器模式
+  23   1              CL = 0x00;                              //设置定时初始值
+  24   1              CH = 0x00;                              //设置定时重载值
+  25   1              CF = 0;                         //清除CF标志
+  26   1              CR = 0;                         //定时器0不开始计时
+  27   1              
+  28   1              send_wave();
+  29   1              CR = 1;
+  30   1              while(RX == 1 && CH<0x17);
+  31   1              CR = 0;
+  32   1              
+  33   1              if(RX == 0)
+  34   1              {
+  35   2                      RX = 1;
+  36   2                      time = (CH * 256) + CL;
+  37   2                      distance = (u32)(time * 0.017);
+  38   2                      //340/2/10000
+  39   2              }
+  40   1              else
+  41   1              {
+  42   2                      distance = 99; 
+  43   2              }
+  44   1              return distance;
+  45   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    104    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   WAVE                                                              03/30/2024 14:17:09 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

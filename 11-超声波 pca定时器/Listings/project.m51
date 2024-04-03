@@ -1,0 +1,426 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    03/30/2024  14:17:10  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\wave.obj, .\Objects\shuma.obj, .\Objects\timer1.obj TO .\Objec
+>> ts\project PRINT (.\Listings\project.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\wave.obj (WAVE)
+  .\Objects\shuma.obj (SHUMA)
+  .\Objects\timer1.obj (TIMER1)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FCAST)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?CASTF)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LMUL)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULDIV)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LNEG)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULSHR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\project (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0010H     UNIT         _DATA_GROUP_
+            DATA    0018H     0009H     UNIT         ?DT?SHUMA
+            DATA    0021H     0001H     UNIT         ?DT?MAIN
+            IDATA   0022H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0018H     UNIT         ?CO?SHUMA
+            CODE    001BH     0003H     ABSOLUTE     
+            CODE    001EH     0303H     UNIT         ?C?LIB_CODE
+            CODE    0321H     0098H     UNIT         ?PR?_WARMA?SHUMA
+            CODE    03B9H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0445H     0069H     UNIT         ?PR?_TIMER1INIT?TIMER1
+            CODE    04AEH     0066H     UNIT         ?PR?SHUMASCAN?SHUMA
+            CODE    0514H     0053H     UNIT         ?PR?RECEIVE_WAVE?WAVE
+            CODE    0567H     004AH     UNIT         ?PR?INTERRUPTTIMER1?MAIN
+            CODE    05B1H     003BH     UNIT         ?PR?_SHUMA?SHUMA
+            CODE    05ECH     0020H     UNIT         ?PR?MAIN?MAIN
+            CODE    060CH     0015H     UNIT         ?PR?SEND_WAVE?WAVE
+            CODE    0621H     0011H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\project (MAIN)
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 2
+
+
+
+SEGMENT                            DATA_GROUP 
+  +--> CALLED SEGMENT            START    LENGTH
+------------------------------------------------
+?PR?INTERRUPTTIMER1?MAIN         0008H    0001H
+  +--> ?PR?SHUMASCAN?SHUMA
+
+?PR?SHUMASCAN?SHUMA              -----    -----
+  +--> ?PR?_SHUMA?SHUMA
+
+?PR?_SHUMA?SHUMA                 -----    -----
+  +--> ?CO?SHUMA
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                    -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                    -----    -----
+  +--> ?PR?_TIMER1INIT?TIMER1
+  +--> ?PR?RECEIVE_WAVE?WAVE
+  +--> ?PR?_WARMA?SHUMA
+
+?PR?_TIMER1INIT?TIMER1           0009H    0004H
+
+?PR?RECEIVE_WAVE?WAVE            0009H    0002H
+  +--> ?PR?SEND_WAVE?WAVE
+
+?PR?_WARMA?SHUMA                 0009H    000FH
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\project (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:0021H         PUBLIC        flag
+  D:00D8H         PUBLIC        CCON
+  C:05ECH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:0567H         PUBLIC        interrupttimer1
+  D:00D0H         PUBLIC        PSW
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 3
+
+
+  -------         PROC          MAIN
+  C:05ECH         LINE#         8
+  C:05ECH         LINE#         9
+  C:05ECH         LINE#         10
+  C:05F1H         LINE#         11
+  C:05F1H         LINE#         12
+  C:05F1H         LINE#         13
+  C:05F6H         LINE#         14
+  C:05F6H         LINE#         15
+  C:05F9H         LINE#         16
+  C:060AH         LINE#         17
+  C:060AH         LINE#         18
+  -------         ENDPROC       MAIN
+  -------         PROC          INTERRUPTTIMER1
+  -------         DO            
+  D:0008H         SYMBOL        count
+  -------         ENDDO         
+  C:0567H         LINE#         22
+  C:0584H         LINE#         25
+  C:0586H         LINE#         26
+  C:058DH         LINE#         27
+  C:058DH         LINE#         28
+  C:0590H         LINE#         29
+  C:0593H         LINE#         30
+  C:0593H         LINE#         31
+  C:0596H         LINE#         32
+  -------         ENDPROC       INTERRUPTTIMER1
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        WAVE
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  B:00D8H.7       PUBLIC        CF
+  D:00F9H         PUBLIC        CH
+  D:00A8H         PUBLIC        IE
+  D:00E9H         PUBLIC        CL
+  B:00D8H.6       PUBLIC        CR
+  D:00B8H         PUBLIC        IP
+  D:00D9H         PUBLIC        CMOD
+  D:00D8H         PUBLIC        CCON
+  B:0090H.0       PUBLIC        P10
+  B:0090H.1       PUBLIC        P11
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:060CH         PUBLIC        send_wave
+  D:00D0H         PUBLIC        PSW
+  C:0514H         PUBLIC        receive_wave
+  -------         PROC          SEND_WAVE
+  -------         DO            
+  D:0007H         SYMBOL        i
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 4
+
+
+  -------         ENDDO         
+  C:060CH         LINE#         8
+  C:060CH         LINE#         9
+  C:060CH         LINE#         10
+  C:060EH         LINE#         11
+  C:0614H         LINE#         12
+  C:0614H         LINE#         13
+  C:0619H         LINE#         14
+  C:061EH         LINE#         15
+  C:0620H         LINE#         16
+  -------         ENDPROC       SEND_WAVE
+  -------         PROC          RECEIVE_WAVE
+  -------         DO            
+  D:0006H         SYMBOL        time
+  D:0009H         SYMBOL        distance
+  -------         ENDDO         
+  C:0514H         LINE#         19
+  C:0514H         LINE#         20
+  C:0514H         LINE#         22
+  C:0517H         LINE#         23
+  C:0519H         LINE#         24
+  C:051BH         LINE#         25
+  C:051DH         LINE#         26
+  C:051FH         LINE#         28
+  C:0522H         LINE#         29
+  C:0524H         LINE#         30
+  C:052EH         LINE#         31
+  C:0530H         LINE#         33
+  C:0533H         LINE#         34
+  C:0533H         LINE#         35
+  C:0535H         LINE#         36
+  C:0543H         LINE#         37
+  C:055CH         LINE#         39
+  C:055EH         LINE#         41
+  C:055EH         LINE#         42
+  C:0564H         LINE#         43
+  C:0564H         LINE#         44
+  C:0566H         LINE#         45
+  -------         ENDPROC       RECEIVE_WAVE
+  -------         ENDMOD        WAVE
+
+  -------         MODULE        SHUMA
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  C:0003H         PUBLIC        LedChar
+  D:00B8H         PUBLIC        IP
+  C:0321H         PUBLIC        _warma
+  C:05B1H         PUBLIC        _shuma
+  D:00D8H         PUBLIC        CCON
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 5
+
+
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:04AEH         PUBLIC        shumascan
+  D:0019H         PUBLIC        shumatmp
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _SHUMA
+  D:0007H         SYMBOL        locate
+  D:0005H         SYMBOL        number
+  C:05B1H         LINE#         19
+  C:05B1H         LINE#         20
+  C:05B1H         LINE#         22
+  C:05B9H         LINE#         23
+  C:05BCH         LINE#         24
+  C:05BFH         LINE#         26
+  C:05C7H         LINE#         27
+  C:05D6H         LINE#         28
+  C:05D9H         LINE#         30
+  C:05E1H         LINE#         31
+  C:05E8H         LINE#         32
+  C:05EBH         LINE#         33
+  -------         ENDPROC       _SHUMA
+  -------         PROC          _WARMA
+  D:0009H         SYMBOL        locate
+  D:000AH         SYMBOL        num
+  -------         DO            
+  D:000EH         SYMBOL        i
+  D:000FH         SYMBOL        j
+  D:0010H         SYMBOL        shark
+  -------         ENDDO         
+  C:0321H         LINE#         37
+  C:0323H         LINE#         38
+  C:0323H         LINE#         39
+  C:0326H         LINE#         41
+  C:0328H         LINE#         42
+  C:0328H         LINE#         43
+  C:0342H         LINE#         44
+  C:035BH         LINE#         45
+  C:0362H         LINE#         46
+  C:0365H         LINE#         47
+  C:0365H         LINE#         48
+  C:036DH         LINE#         49
+  C:036DH         LINE#         50
+  C:0381H         LINE#         51
+  C:0381H         LINE#         52
+  C:038AH         LINE#         53
+  C:038AH         LINE#         54
+  C:038AH         LINE#         55
+  C:0395H         LINE#         56
+  C:039EH         LINE#         57
+  C:039EH         LINE#         58
+  C:03B4H         LINE#         59
+  C:03B8H         LINE#         60
+  -------         ENDPROC       _WARMA
+  -------         PROC          SHUMASCAN
+  -------         DO            
+  D:0018H         SYMBOL        count
+  -------         ENDDO         
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 6
+
+
+  C:04AEH         LINE#         63
+  C:04AEH         LINE#         64
+  C:04AEH         LINE#         66
+  C:04B0H         LINE#         67
+  C:04DEH         LINE#         68
+  C:04DEH         LINE#         69
+  C:04DEH         LINE#         70
+  C:04E2H         LINE#         71
+  C:04E4H         LINE#         72
+  C:04E4H         LINE#         73
+  C:04E8H         LINE#         74
+  C:04EAH         LINE#         75
+  C:04EAH         LINE#         76
+  C:04EEH         LINE#         77
+  C:04F0H         LINE#         78
+  C:04F0H         LINE#         79
+  C:04F4H         LINE#         80
+  C:04F6H         LINE#         81
+  C:04F6H         LINE#         82
+  C:04FAH         LINE#         83
+  C:04FCH         LINE#         84
+  C:04FCH         LINE#         85
+  C:0500H         LINE#         86
+  C:0502H         LINE#         87
+  C:0502H         LINE#         88
+  C:0509H         LINE#         89
+  C:0509H         LINE#         90
+  C:0509H         LINE#         91
+  C:0510H         LINE#         92
+  C:0513H         LINE#         93
+  C:0513H         LINE#         94
+  C:0513H         LINE#         95
+  -------         ENDPROC       SHUMASCAN
+  -------         ENDMOD        SHUMA
+
+  -------         MODULE        TIMER1
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  B:00A8H.7       PUBLIC        EA
+  D:00F8H         PUBLIC        P7
+  C:0445H         PUBLIC        _timer1init
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:008EH         PUBLIC        AUXR
+  B:00A8H.3       PUBLIC        ET1
+  B:0088H.7       PUBLIC        TF1
+  D:008DH         PUBLIC        TH1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 7
+
+
+  D:008BH         PUBLIC        TL1
+  B:00B8H.3       PUBLIC        PT1
+  B:0088H.6       PUBLIC        TR1
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _TIMER1INIT
+  D:0003H         SYMBOL        ms
+  -------         DO            
+  D:0009H         SYMBOL        tmp
+  -------         ENDDO         
+  C:0445H         LINE#         7
+  C:0447H         LINE#         8
+  C:0447H         LINE#         11
+  C:044AH         LINE#         13
+  C:044DH         LINE#         15
+  C:0459H         LINE#         16
+  C:047CH         LINE#         17
+  C:0492H         LINE#         18
+  C:04A0H         LINE#         19
+  C:04A3H         LINE#         21
+  C:04A5H         LINE#         22
+  C:04A7H         LINE#         24
+  C:04A9H         LINE#         25
+  C:04ABH         LINE#         26
+  C:04ADH         LINE#         27
+  -------         ENDPROC       _TIMER1INIT
+  -------         ENDMOD        TIMER1
+
+  -------         MODULE        ?C?FPMUL
+  C:001EH         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FCAST
+  C:012EH         PUBLIC        ?C?FCASTC
+  C:0129H         PUBLIC        ?C?FCASTI
+  C:0124H         PUBLIC        ?C?FCASTL
+  -------         ENDMOD        ?C?FCAST
+
+  -------         MODULE        ?C?CASTF
+  C:0162H         PUBLIC        ?C?CASTF
+  -------         ENDMOD        ?C?CASTF
+
+  -------         MODULE        ?C?LMUL
+  C:01E3H         PUBLIC        ?C?LMUL
+  -------         ENDMOD        ?C?LMUL
+
+  -------         MODULE        ?C?ULDIV
+  C:026EH         PUBLIC        ?C?ULDIV
+  -------         ENDMOD        ?C?ULDIV
+
+  -------         MODULE        ?C?LNEG
+  C:0300H         PUBLIC        ?C?LNEG
+  -------         ENDMOD        ?C?LNEG
+
+  -------         MODULE        ?C?ULSHR
+  C:030EH         PUBLIC        ?C?ULSHR
+  -------         ENDMOD        ?C?ULSHR
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  03/30/2024  14:17:10  PAGE 8
+
+
+Program Size: data=35.0 xdata=0 code=1586
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
