@@ -45,8 +45,8 @@ void interrupttimer1() interrupt 3
 		{count2=0;ledflow();}
 }
 
-//这里是定时器0（pwm）中断函数
-void interrupttimer0() interrupt 12
+//这里是定时器2（pwm）中断函数
+void interrupttimer2() interrupt 12
 {
 	pwm(100,exvalue[i]);//
 }
