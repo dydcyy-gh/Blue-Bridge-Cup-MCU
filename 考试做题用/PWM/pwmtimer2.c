@@ -45,8 +45,8 @@ void pwm (u8 max,u8 ex)
 	}
 }
 
-//这里是定时器0（pwm）中断函数
-void interrupttimer0() interrupt 12
+//这里是定时器2（pwm）中断函数
+void interrupttimer2() interrupt 12
 {
 	pwm (100,80);
 }
