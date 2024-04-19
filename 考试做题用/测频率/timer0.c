@@ -9,7 +9,7 @@ void timer0init()
 {
 	AUXR |= 0x80;
 	//TMOD
-	TMOD &= 0xF0;		//设置定时器模式
+	TMOD |= 0x05;		//设置定时器模式
 	//TL TH
 	TL0 = 0x00;		    //设置定时初始值
 	TH0 = 0x00;		    //设置定时初始值	
